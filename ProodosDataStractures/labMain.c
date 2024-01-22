@@ -1,189 +1,259 @@
-#include<stdio.h>
-#include<stdlib.h>
-
-#define MAX_TEST_SIZE 100
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 //-----------------------------------------------STOIVA-----------------------------------------------//
-struct StackNode{            // Dimiourgoume ti domi tou komvou
-    char ekdilwsi[MAX_TEXT_SIZE];           // pou apoteleitai apo to pedio ton dedomenon
-    struct Node* next;  // kai ton deikti gia ton epomeno komvo
-};
 
-struct Stack{           // Dimiourgoume ti domi tis stoivas
-    struct Node* top;   // i opoia exei os stoixeio tis ton komvo top
-};
+typedef struct Ekdilwsh {
+    char onoma[50];
+    char ora[20];
+    char topothesia[50];
+} Ekdilwsh;
 
-void initStack(struct Stack* stack){ // Arxikopoihsh ths stoivas
-    stack->top = NULL;      // O komvos top exei timh null ara h stoiva einai adeia
+typedef struct Eisitirio {
+    int indexEkdilwshs;
+} Eisitirio;
+
+typedef struct StoivaEkdilwsewn {
+    Ekdilwsh data[100];
+    int koryfi;
+} StoivaEkdilwsewn;
+
+void arxikopoiisiStoivas(StoivaEkdilwsewn* stoiva) {
+    stoiva->koryfi = -1;
 }
 
-int isEmpty(struct Stack* stack){  // Elegxos: an h stoiva einai adeia
-    return (stack->top == NULL);    // An o top exei periexomeno NULL tote h stoiva den exei kamia timi
-}                                   // Ara i sinthiki epistrefei 1 diaforetika 0 (alithis || psevdis)
-
-void push(struct Stack* stack, int item){
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node)); // Dimiourgia enos neou komvou
-    if (newNode == NULL) {      // Elegxos epitixias tis dimiourgeias tou komvou
-        printf("Σφάλμα δημιουργίας νέου κόμβου!\n");
-        exit(EXIT_FAILURE);
-    }
-    newNode->data = item;       // Anathesi tis timis pou dothike sto pedio ton dedomenon
-    newNode->next = stack->top; // O neos komvos deixnei ston top
-    stack->top = newNode;       // O neos komvos ginetai o top
+int einaiKeniStoiva(StoivaEkdilwsewn* stoiva) {
+    return stoiva->koryfi == -1;
 }
 
-void pop(struct Stack* stack){
-    if (isEmpty(stack)) {
-        printf(Υποχείλιση στοίβας\n");
-        exit(EXIT_FAILURE);
-    }
-    char data = stack->top->data;    // Antloume ta dedomena apo ton komvo top
-    struct StackNode* temp = stack->top; // Dimiourgia enos prosorinou komvou ston opoio antigrafoume ton komvo top
-    stack->top = stack->top->next;  // Metakinisi tou top ston epomeno komvo
-    free(temp);                 // Dagrafi tou prosorinou komvou (prwhn top)
-}
-
-void displayStack(struct Stack* stack){
-    if (isEmpty(stack)) {
-        printf("Η στοίβα είναι άδεια!\n");
-    }
-    else{
-        struct Node* current = stack->top;       // Dimiourgia "trexon" komvou pros provoli (ksekiname apo ton top)
-        while (current != NULL) {                // Mexri loipon o current na ginei NULL
-            printf("\n--->%d", current->data); // Emfanizoume to perioxomeno tou komvou
-            current = current->next;            // Kai o current ginetai o epomenos komvos
-        }
-    }
-}
-//-----------------------------------------------STOIVA-----------------------------------------------//
-
-//-----------------------------------------------OURA-----------------------------------------------//
-struct QueueNode{            // Dimiourgoume ti domi tou komvou
-    int data;           // pou apoteleitai apo to pedio ton dedomenon
-    struct Node* next;  // kai ton deikti gia ton epomeno komvo
-};
-
-struct Queue {          // Dimiourgoume ti domi tis stoivas
-    struct QueueNode* front; // Pou xrisimopoiei tous xaraktiristikous komvous front
-    struct QueueNode* rear;  // Kai rear
-};
-
-void initQueue(struct Queue* queue) { // Arxikopoihsh ths ouras
-    queue->front = NULL;    // Oi komvoi front kai rear pairnun tin timi NULL
-    queue->rear = NULL;     // Epeidi i oura einai adeia
-}
-
-int isEmpty(struct Queue* queue) {  // Elegxos: an h oura einai adeia
-    return (queue->front == NULL);  // An o front exei periexomeno NULL tote h stoiva den exei kamia timi
-}                                   // Ara i sinthiki epistrefei 1 diaforetika 0 (alithis || psevdis)
-
-void enqueue(struct Queue* queue, int item) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));   // Dimiourgia neou komvou
-    if (newNode == NULL) {           // Elegxos epitixias tis dimiourgeias tou komvou
-        printf("Σφάλμα δημιουργίας νέου κόμβου!\n");
-        exit(EXIT_FAILURE);
-    }
-    newNode->data = item;           // Anathesi tis timis pou dothike sto pedio ton dedomenon
-    newNode->next = NULL;
-    if (isEmpty(queue)) {           // An i oura einai adeia ( i sinthiki afti tha lavei tin timi 1)
-        queue->front = newNode;     // Tote o komvos front
-        queue->rear = newNode;      // Kai o rear isountai
+void pushEkdilwsh(StoivaEkdilwsewn* stoiva, Ekdilwsh ekdilwsh) {
+    if (stoiva->koryfi < 99) {
+        stoiva->data[++stoiva->koryfi] = ekdilwsh;
     } else {
-        queue->rear->next = newNode;    // Alliws eisagoume ton neo komvo meta ton rear
-        queue->rear = newNode;          // kai enhmerwnoume ton rear (einai pleon o neos komvos)
+        printf("Η στοίβα είναι γεμάτη. Δεν μπορεί να προστεθούν άλλες εκδηλώσεις.\n");
     }
-}
-int dequeue(struct Queue* queue) {      // Aferaish stoixeiou apo thn oura
-    if (isEmpty(queue)) {               // An h oura einai adeia tote prokyptei ypoxeilish
-        printf("Υποχείλιση ουράς!\n"); // Ara den mporoume na aferaisoume kapoio stoixeio
-        exit(EXIT_FAILURE);
-    }
-    int data = queue->rear->data;       // Antloume ta dedomena apo ton komvo rear
-    if (queue->front == queue->rear) {  // An o front kai o rear einai isoi
-        free(queue->rear);          // Diagrafoume to teleftaio stoixeio ths ouras
-        queue->front = NULL;            // Kai thetoume ton front
-        queue->rear = NULL;             // Kai ton rear se NULL
-    } else {                            // alliws
-        struct Node* rearPrev = queue->front;   // kanoume mia prospelasi
-        while (rearPrev->next != queue->rear) { // vriskume ton proteleftaio komvo
-            rearPrev = rearPrev->next;          // kai ton apothikevoume
-        }
-        free(queue->rear);          // Diagrafoume ton komvo rear
-        queue->rear = rearPrev;         // Kai ti thesi tou pairnei o proteleftaios
-        queue->rear->next = NULL;       // Etsi o pointer tou rear ginetai NULL
-    }
-    return data;    // kai epistrefoume pros emfanisi tin timi pou diagrapsame
 }
 
-void displayQueue(struct Queue* queue) {
-    if (isEmpty(queue)) {
-        printf("Η ουρά είναι άδεια!\n");
-    }else{
-        struct Node* current = queue->front;        // Dimiourgia "trexon" komvou pros provoli (ksekiname apo ton front)
-        while (current != NULL) {                   // Mexri loipon o current na ginei NULL
-            printf("\n%d ", current->data);  // Emfanizoume to perioxomeno tou komvou
-            current = current->next;               // Kai o current ginetai o epomenos komvos
+Ekdilwsh popEkdilwsh(StoivaEkdilwsewn* stoiva) {
+    Ekdilwsh keniEkdilwsh = {"", "", ""};
+    if (!einaiKeniStoiva(stoiva)) {
+        return stoiva->data[stoiva->koryfi--];
+    } else {
+        printf("Η στοίβα είναι άδεια.\n");
+        return keniEkdilwsh;
+    }
+}
+
+void emfanisiStivasEkdiloseon(StoivaEkdilwsewn* stoiva) {
+    if (einaiKeniStoiva(stoiva)) {
+        printf("Η στοίβα εκδηλώσεων είναι κενή.\n");
+    } else {
+        printf("Τρέχουσες Εκδηλώσεις:\n");
+        for (int i = 0; i <= stoiva->koryfi; ++i) {
+            Ekdilwsh ekdilosi = stoiva->data[i];
+            printf("Εκδήλωση \"%s\" stis %s sto %s\n", ekdilosi.onoma, ekdilosi.ora, ekdilosi.topothesia);
         }
     }
+    printf("\n\n\n");
 }
-//-----------------------------------------------OURA-----------------------------------------------//
 
+//-----------------------------------------------OURES-----------------------------------------------//
+typedef struct OuraEisitiriwn {
+    Eisitirio data[100];
+    int arxi, telos;
+} OuraEisitiriwn;
+
+typedef struct OuraXriston {
+    int data[100];
+    int arxi, telos;
+} OuraXriston;
+
+void arxikopoiisiOurasEisitiriwn(OuraEisitiriwn* oura) {
+    oura->arxi = oura->telos = -1;
+}
+
+int einaiKeniOuraEisitiriwn(OuraEisitiriwn* oura) {
+    return oura->arxi == -1;
+}
+
+void eisagogiEisitiriou(OuraEisitiriwn* oura, Eisitirio eisitirio) {
+    if (oura->telos < 99) {
+        if (einaiKeniOuraEisitiriwn(oura)) {
+            oura->arxi = oura->telos = 0;
+        } else {
+            oura->telos++;
+        }
+        oura->data[oura->telos] = eisitirio;
+    } else {
+        printf("Η ουρά εισιτηρίων είναι γεμάτη. Δεν μπορούν να προστεθούν άλλα εισιτήρια.\n");
+    }
+}
+
+Eisitirio eksagogiEisitiriou(OuraEisitiriwn* oura) {
+    Eisitirio kenoEisitirio = {-1};
+    if (!einaiKeniOuraEisitiriwn(oura)) {
+        Eisitirio eisitirio = oura->data[oura->arxi];
+        if (oura->arxi == oura->telos) {
+            arxikopoiisiOurasEisitiriwn(oura);
+        } else {
+            oura->arxi++;
+        }
+        return eisitirio;
+    } else {
+        printf("Η ουρά εισιτηρίων είναι άδεια.\n");
+        return kenoEisitirio;
+    }
+}
+
+void arxikopoiisiOurasXriston(OuraXriston* oura) {
+    oura->arxi = oura->telos = -1;
+}
+
+int einaiKeniOuraXriston(OuraXriston* oura) {
+    return oura->arxi == -1;
+}
+
+void eisagogiXristi(OuraXriston* oura, int kodikosXristi) {
+    if ((oura->telos + 1) % 100 != oura->arxi) {
+        if (einaiKeniOuraXriston(oura)) {
+            oura->arxi = oura->telos = 0;
+        } else {
+            oura->telos = (oura->telos + 1) % 100;
+        }
+        oura->data[oura->telos] = kodikosXristi;
+    } else {
+        printf("Η ουρά χρηστών είναι γεμάτη. Δεν μπορούν να προστεθούν άλλοι χρήστες.\n");
+    }
+}
+
+int eksagogiXristi(OuraXriston* oura) {
+    int kenasKodikosXristi = -1;
+    if (!einaiKeniOuraXriston(oura)) {
+        int kodikosXristi = oura->data[oura->arxi];
+        if (oura->arxi == oura->telos) {
+            arxikopoiisiOurasXriston(oura);
+        } else {
+            oura->arxi = (oura->arxi + 1) % 100;
+        }
+        return kodikosXristi;
+    } else {
+        printf("Η ουρά χρηστών είναι άδεια.\n");
+        return kenasKodikosXristi;
+    }
+}
 //-----------------------------------------------LISTA-----------------------------------------------//
-struct ListNode {   // Dimiourgoume ti domi tou komvou
-    int data;       // Dimiourgoume to meros pou tha apothikevei ta dedomena
-    struct ListNode* next;  // Dimiourgoume to meros pou tha apothikevei ton epomeno komvo(deikti gia ton epomeno)
-};
+typedef struct KomvosEkdilwshs {
+    Ekdilwsh ekdilwsh;
+    struct KomvosEkdilwshs* epomenos;
+} KomvosEkdilwshs;
 
-// Dilwsi neou komvou
-struct ListNode* createNode(int value) {
-    struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
-    if (newNode == NULL) {
-        perror("Memory allocation failed");
+typedef struct ListaEkdilwsewn {
+    KomvosEkdilwshs* kefali;
+} ListaEkdilwsewn;
+
+void arxikopoiisiListaEkdilwsewn(ListaEkdilwsewn* lista) {
+    lista->kefali = NULL;
+}
+
+void eisagogiEkdilwshs(ListaEkdilwsewn * lista, Ekdilwsh ekdilwsh) {
+    KomvosEkdilwshs * neosKomvos = (KomvosEkdilwshs *)malloc(sizeof(KomvosEkdilwshs ));
+    if (neosKomvos == NULL) {
+        perror("Αποτυχία δέσμευσης μνήμης");
         exit(EXIT_FAILURE);
     }
-    newNode->data = value;
-    newNode->next = NULL;
-    return newNode;
+    neosKomvos->ekdilwsh = ekdilwsh;
+    neosKomvos->epomenos = lista->kefali;
+    lista->kefali = neosKomvos;
 }
 
-//  Sinartisi gia tin eisagwgh neou komvou stin arxi tis listas
-struct Node* insertAtBeginning(struct Node* head, int value) {
-    struct Node* newNode = createNode(value);
-    newNode->next = head;
-    return newNode;
-}
-
-// Sinartisi gia tin mefanisi ton periexomenwn tis listas
-void printList(struct Node* head) {
-    struct Node* current = head;
-    while (current != NULL) {
-        printf("%d -> ", current->data);
-        current = current->next;
+void diagrafiOlisthismenisEkdilwshs(ListaEkdilwsewn * lista) {
+    if (lista->kefali != NULL) {
+        KomvosEkdilwshs * proigoumenosKefali = lista->kefali;
+        lista->kefali = lista->kefali->epomenos;
+        free(proigoumenosKefali);
     }
-    printf("NULL\n");
 }
-//-----------------------------------------------LISTA-----------------------------------------------//
 
 
-int main(){
-//STOIVA
-    struct Stack stoiva;        // Dimiourgoume mia domi stoivas
-    initStack(&stoiva);   // Arxikopoioume ti stoiva
-//OURA
-    struct Queue oura; // Dimiourgoume th domh ths ouras
-    initQueue(&oura); // Arxikopoioume tin oura
-//APLI LISTA
+int main() {
+    Ekdilwsh ekdilosi1, ekdilosi2, ekdilosi3,ekdilosi4,ekdilosi5;
+    strcpy(ekdilosi1.onoma, "Συναυλία ΠυξΛαξ");
+    strcpy(ekdilosi1.ora, "20:00");
+    strcpy(ekdilosi1.topothesia, "Π.Ε.Λ.");
 
-//DIPLA SINDEDEMENI LISTA
-    push(&stoiva, "To Tavli");
-    enqueue(&oura, 700);
-    push(&stoiva, "20lepto"); 
-    enqueue(&oura,1500);
-    push(&stoiva, "Airmax");
-    enqueue(&oura, 3000);
-    push(&stoiva, "Oneiro Therinis Nyktos");
-    enqueue(&oura, 1000);
-    displayStack(&stoiva);
-    
+    strcpy(ekdilosi2.onoma, "Παρουσιαση Δισκου Airmax");
+    strcpy(ekdilosi2.ora, "22:00");
+    strcpy(ekdilosi2.topothesia, "Π.Ε.Λ.");
+
+    strcpy(ekdilosi3.onoma, "Το Τάβλι");
+    strcpy(ekdilosi3.ora, "20:15");
+    strcpy(ekdilosi3.topothesia, "Β. Θεατρική Σκηνή Λαμίας");
+
+    strcpy(ekdilosi4.onoma, "Συναυλία ThraxPunks");
+    strcpy(ekdilosi4.ora, "23:00");
+    strcpy(ekdilosi4.topothesia, "Λουτρά Υπάτης");
+
+    strcpy(ekdilosi5.onoma, "Χρυσά Κουπιά");
+    strcpy(ekdilosi5.ora, "18:30");
+    strcpy(ekdilosi5.topothesia, "Α. Θεατρική Σκηνή Λαμίας");
+
+    // Αρχικοποίηση στοίβας εικόνων
+    StoivaEkdilwsewn stoivaEkdilwsewn;
+    arxikopoiisiStoivas(&stoivaEkdilwsewn);
+
+    // Προσθήκη εικόνων στη στοίβα
+    pushEkdilwsh(&stoivaEkdilwsewn, ekdilosi1);
+    pushEkdilwsh(&stoivaEkdilwsewn, ekdilosi2);
+    pushEkdilwsh(&stoivaEkdilwsewn, ekdilosi3);
+    pushEkdilwsh(&stoivaEkdilwsewn, ekdilosi4);
+    pushEkdilwsh(&stoivaEkdilwsewn, ekdilosi5);
+
+    emfanisiStivasEkdiloseon(&stoivaEkdilwsewn);
+    // Δημιουργία εισιτηρίων για τις εικόνες
+    Eisitirio eisitirio1, eisitirio2, eisitirio3, eisitirio4, eisitirio5;
+    eisitirio1.indexEkdilwshs = 1;
+    eisitirio2.indexEkdilwshs = 2;
+    eisitirio3.indexEkdilwshs = 3;
+    eisitirio4.indexEkdilwshs = 4;
+    eisitirio5.indexEkdilwshs = 5;
+
+    OuraEisitiriwn ouraEisitiriwn;
+    arxikopoiisiOurasEisitiriwn(&ouraEisitiriwn);
+
+    // Εισαγωγή διαθέσιμων εισιτηρίων
+    eisagogiEisitiriou(&ouraEisitiriwn, eisitirio1);
+    eisagogiEisitiriou(&ouraEisitiriwn, eisitirio2);
+    eisagogiEisitiriou(&ouraEisitiriwn, eisitirio3);
+    eisagogiEisitiriou(&ouraEisitiriwn, eisitirio4);
+    eisagogiEisitiriou(&ouraEisitiriwn, eisitirio5);
+
+    // Δημηουργία χρηστών
+    OuraXriston ouraXriston;
+    arxikopoiisiOurasXriston(&ouraXriston);
+
+    // Εισαγωγή χρηστών που αγόρασαν εισιτήριο
+    eisagogiXristi(&ouraXriston, 1);
+    eisagogiXristi(&ouraXriston, 2);
+    eisagogiXristi(&ouraXriston, 3);
+    eisagogiXristi(&ouraXriston, 4);
+    eisagogiXristi(&ouraXriston, 5);
+
+    // Εμφάνιση χρηστών που αγόρασαν εισιτήρια
+    while (!einaiKeniOuraXriston(&ouraXriston)) {
+        int dequeuedUserId = eksagogiXristi(&ouraXriston);
+        printf("Ο χρήστης--->%d αγόρασε ειστήριο!\n", dequeuedUserId);
+    }
+
+    // Εμφάνιση αγορασμένων εισιτηρίων
+    while (!einaiKeniOuraEisitiriwn(&ouraEisitiriwn)) {
+        Eisitirio dequeuedTicket = eksagogiEisitiriou(&ouraEisitiriwn);
+        printf("Εισιτήριο για την εκδήλωση %d.\n", dequeuedTicket.indexEkdilwshs);
+    }
+
+    // Παράδειγμα αφαίρεσης εκδήλωσης
+    popEkdilwsh((&stoivaEkdilwsewn));
+    popEkdilwsh((&stoivaEkdilwsewn));
+
     return 0;
 }
